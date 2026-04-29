@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Pneumonias em Pediatria</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #1a1a1a; min-height: 100vh; }
+  header { background: #1e3a5f; color: white; padding: 20px 30px; text-align: center; }
+  header h1 { font-size: 22px; margin-bottom: 4px; }
+  header p { font-size: 13px; opacity: 0.8; }
+  .quiz-container { max-width: 800px; margin: 30px auto; padding: 0 16px 60px; }
+  #startScreen { background: white; border-radius: 12px; padding: 40px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  #startScreen h2 { font-size: 20px; color: #1e3a5f; margin-bottom: 12px; }
+  #startScreen p { font-size: 14px; color: #555; margin-bottom: 24px; line-height: 1.6; }
+  .progress-bar-bg { background: #dde3ea; border-radius: 8px; height: 8px; margin-bottom: 8px; }
+  .progress-bar-fill { background: #2563eb; height: 8px; border-radius: 8px; transition: width 0.4s ease; }
+  .progress-label { font-size: 12px; color: #666; margin-bottom: 20px; }
+  .question-card { background: white; border-radius: 12px; padding: 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 16px; }
+  .question-number { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #2563eb; letter-spacing: 1px; margin-bottom: 10px; }
+  .question-text { font-size: 15px; line-height: 1.65; color: #1a1a1a; margin-bottom: 22px; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn { background: #f7f9fc; border: 2px solid #dde3ea; border-radius: 8px; padding: 12px 16px; text-align: left; font-size: 14px; cursor: pointer; transition: background 0.15s, border-color 0.15s; line-height: 1.5; }
+  .option-btn:hover:not(:disabled) { background: #e8f0fe; border-color: #2563eb; }
+  .option-btn.correct { background: #d1fae5; border-color: #16a34a; color: #166534; }
+  .option-btn.wrong { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+  .option-btn:disabled { cursor: default; }
+  .explanation { display: none; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0; padding: 14px 16px; margin-top: 14px; font-size: 13px; line-height: 1.6; color: #166534; }
+  .explanation.show { display: block; }
+  .btn-next { display: none; margin-top: 18px; background: #2563eb; color: white; border: none; border-radius: 8px; padding: 12px 28px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .btn-next:hover { background: #1d4ed8; }
+  .btn-next.show { display: inline-block; }
+  .btn-primary { background: #2563eb; color: white; border: none; border-radius: 8px; padding: 14px 36px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .btn-primary:hover { background: #1d4ed8; }
+  #resultScreen { display: none; background: white; border-radius: 12px; padding: 40px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .score-circle { width: 120px; height: 120px; border-radius: 50%; background: #1e3a5f; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 20px; }
+  .score-circle .score-num { font-size: 32px; font-weight: 700; }
+  .score-circle .score-denom { font-size: 13px; opacity: 0.8; }
+  #resultScreen h2 { font-size: 20px; color: #1e3a5f; margin-bottom: 10px; }
+  #resultScreen p { font-size: 14px; color: #555; margin-bottom: 24px; }
+  .stats-row { display: flex; justify-content: center; gap: 24px; margin-bottom: 28px; flex-wrap: wrap; }
+  .stat-box { background: #f7f9fc; border-radius: 8px; padding: 12px 20px; text-align: center; min-width: 90px; }
+  .stat-box .stat-val { font-size: 22px; font-weight: 700; }
+  .stat-box .stat-lbl { font-size: 11px; color: #888; margin-top: 2px; }
+  .stat-box.green .stat-val { color: #16a34a; }
+  .stat-box.red .stat-val { color: #dc2626; }
+  .stat-box.blue .stat-val { color: #2563eb; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Pneumonias em Pediatria</h1>
+  <p>Pediatria — Infectologia Pediátrica</p>
+</header>
+<div class="quiz-container">
+  <div id="startScreen">
+    <h2>Quiz de Revisão</h2>
+    <p>18 questões cobrindo diagnóstico de PAC, critérios de taquipneia por faixa etária, agentes etiológicos, indicação de exames, tratamento ambulatorial e hospitalar e casos clínicos.<br><br>Responda cada questão e veja a explicação antes de avançar.</p>
+    <button class="btn-primary" onclick="startQuiz()">Começar Quiz</button>
+  </div>
+  <div id="quizArea" style="display:none;">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar" style="width:0%"></div></div>
+    <div class="progress-label" id="progressLabel">Questão 0 de 18</div>
+    <div class="question-card" id="questionCard">
+      <div class="question-number" id="questionNumber"></div>
+      <div class="question-text" id="questionText"></div>
+      <div class="options" id="optionsContainer"></div>
+      <div class="explanation" id="explanation"></div>
+      <button class="btn-next" id="btnNext" onclick="nextQuestion()">Próxima questão →</button>
+    </div>
+  </div>
+  <div id="resultScreen">
+    <div class="score-circle">
+      <span class="score-num" id="scoreFinal">0</span>
+      <span class="score-denom" id="scoreDenom">de 18</span>
+    </div>
+    <h2 id="resultTitle"></h2>
+    <p id="resultMsg"></p>
+    <div class="stats-row">
+      <div class="stat-box green"><div class="stat-val" id="statCorrect">0</div><div class="stat-lbl">Acertos</div></div>
+      <div class="stat-box red"><div class="stat-val" id="statWrong">0</div><div class="stat-lbl">Erros</div></div>
+      <div class="stat-box blue"><div class="stat-val" id="statPct">0%</div><div class="stat-lbl">Aproveitamento</div></div>
+    </div>
+    <button class="btn-primary" onclick="restartQuiz()">Refazer Quiz</button>
+  </div>
+</div>
+<script>
+const rawQuestions = [
+  {
+    question: "Qual é a tríade clínica que define o diagnóstico de Pneumonia Adquirida na Comunidade (PAC) em pediatria?",
+    options: [
+      "Febre + tosse + taquipneia",
+      "Febre + dispneia + leucocitose",
+      "Tosse + crepitações + infiltrado no Rx",
+      "Febre + consolidação pulmonar + queda do estado geral",
+      "Taquipneia + hipoxemia + proteína C reativa elevada"
+    ],
+    correctIndex: 0,
+    explanation: "O diagnóstico de PAC é essencialmente clínico: febre + tosse + taquipneia. A taquipneia é o sinal mais sensível e específico de pneumonia em crianças. Radiografia de tórax é reservada para casos graves ou de difícil diagnóstico."
+  },
+  {
+    question: "Qual o critério de taquipneia para lactentes menores de 2 meses?",
+    options: [
+      "≥60 movimentos respiratórios por minuto",
+      "≥50 movimentos respiratórios por minuto",
+      "≥40 movimentos respiratórios por minuto",
+      "≥30 movimentos respiratórios por minuto",
+      "≥70 movimentos respiratórios por minuto"
+    ],
+    correctIndex: 0,
+    explanation: "Critérios de taquipneia por faixa etária: <2 meses = ≥60 irpm; 2–11 meses = ≥50 irpm; 1–4 anos = ≥40 irpm. São os valores de corte da OMS para triagem de pneumonia em atenção primária."
+  },
+  {
+    question: "Qual o critério de taquipneia para crianças de 2 a 11 meses?",
+    options: [
+      "≥50 movimentos respiratórios por minuto",
+      "≥60 movimentos respiratórios por minuto",
+      "≥40 movimentos respiratórios por minuto",
+      "≥45 movimentos respiratórios por minuto",
+      "≥55 movimentos respiratórios por minuto"
+    ],
+    correctIndex: 0,
+    explanation: "Taquipneia em 2–11 meses: ≥50 irpm. Lembrar: <2m = 60; 2–11m = 50; 1–4a = 40. A taquipneia é o sinal mais precoce de comprometimento pulmonar e deve ser sempre verificada em criança com febre e tosse."
+  },
+  {
+    question: "Qual o principal agente bacteriano de PAC em crianças de 1 mês a 5 anos?",
+    options: [
+      "Streptococcus pneumoniae",
+      "Mycoplasma pneumoniae",
+      "Haemophilus influenzae tipo b",
+      "Staphylococcus aureus",
+      "Chlamydophila pneumoniae"
+    ],
+    correctIndex: 0,
+    explanation: "O Streptococcus pneumoniae (pneumococo) é o principal agente bacteriano de PAC em todas as faixas etárias pediátricas, incluindo de 1 mês a 5 anos. A vacina pneumocócica conjugada reduziu significativamente sua incidência."
+  },
+  {
+    question: "Qual agente atípico é o principal causador de PAC em crianças maiores de 5 anos e adolescentes?",
+    options: [
+      "Mycoplasma pneumoniae",
+      "Chlamydia trachomatis",
+      "Streptococcus pneumoniae",
+      "Legionella pneumophila",
+      "Bordetella pertussis"
+    ],
+    correctIndex: 0,
+    explanation: "Em >5 anos e adolescentes, o Mycoplasma pneumoniae é o principal agente (pneumonia atípica). Caracteriza-se por início insidioso, febre moderada, tosse seca persistente, infiltrado intersticial no Rx. Tratamento: azitromicina ou claritromicina."
+  },
+  {
+    question: "Uma lactente de 6 semanas, afebril, apresenta tosse espasmódica progressiva há 2 semanas, sem melhora com amoxicilina. Ao Rx: infiltrado intersticial bilateral. Qual o agente mais provável e o tratamento?",
+    options: [
+      "Chlamydia trachomatis — tratamento com azitromicina por 5 dias",
+      "Mycoplasma pneumoniae — tratamento com claritromicina por 10 dias",
+      "Streptococcus pneumoniae — tratamento com amoxicilina em dose maior",
+      "Vírus sincicial respiratório — tratamento de suporte sem antibiótico",
+      "Bordetella pertussis — tratamento com azitromicina e notificação compulsória"
+    ],
+    correctIndex: 0,
+    explanation: "Chlamydia trachomatis: pneumonia afebril em lactente de 4–12 semanas, tosse espasmódica característica, infiltrado intersticial. Transmissão perinatal (canal de parto). Tratamento: azitromicina 5 dias (ou eritromicina 14 dias). Não responde a amoxicilina."
+  },
+  {
+    question: "Qual o tratamento de primeira linha para PAC ambulatorial em crianças previamente hígidas?",
+    options: [
+      "Amoxicilina oral 45–90 mg/kg/dia por 7–10 dias",
+      "Azitromicina oral por 5 dias",
+      "Ceftriaxona intramuscular dose única",
+      "Ampicilina endovenosa por 7 dias",
+      "Claritromicina oral por 14 dias"
+    ],
+    correctIndex: 0,
+    explanation: "PAC ambulatorial em criança sem complicações: amoxicilina oral (45–90 mg/kg/dia dividida em 2–3 doses, por 7–10 dias). Cobre pneumococo. Azitromicina é reservada para suspeita de atípicos (>5 anos) ou alergia à penicilina."
+  },
+  {
+    question: "Qual o antibiótico de escolha para PAC com indicação de internação hospitalar e tratamento endovenoso?",
+    options: [
+      "Ampicilina endovenosa",
+      "Ceftriaxona endovenosa",
+      "Vancomicina endovenosa",
+      "Clindamicina endovenosa",
+      "Penicilina cristalina endovenosa"
+    ],
+    correctIndex: 0,
+    explanation: "PAC hospitalar sem complicações: ampicilina EV. Nos casos mais graves, com suspeita de pneumococo resistente ou complicações (empiema, abscesso), usa-se ceftriaxona ou amoxicilina-clavulanato EV. Vancomicina para casos graves com resistência."
+  },
+  {
+    question: "Em quais situações está indicada a radiografia de tórax na PAC pediátrica?",
+    options: [
+      "Casos graves, sem resposta ao tratamento inicial, suspeita de complicações (empiema, abscesso) ou dúvida diagnóstica",
+      "Rotineiramente em todo caso de pneumonia diagnosticado clinicamente",
+      "Apenas em lactentes menores de 3 meses com taquipneia",
+      "Somente quando há hemograma com leucocitose acima de 15.000/mm³",
+      "Obrigatória antes de iniciar qualquer antibiótico ambulatorial"
+    ],
+    correctIndex: 0,
+    explanation: "O diagnóstico de PAC é clínico (febre + tosse + taquipneia). Rx de tórax NÃO é obrigatório na PAC típica não complicada. Indicações: casos graves, ausência de resposta ao tratamento, suspeita de complicações (empiema, abscesso pulmonar, pneumatocele) ou dúvida diagnóstica."
+  },
+  {
+    question: "Quais são os critérios de internação hospitalar para PAC pediátrica?",
+    options: [
+      "Hipoxemia (SpO₂ <92%), taquipneia grave, dificuldade respiratória importante, recusa alimentar, suspeita de agente grave, falha do tratamento ambulatorial ou <2 meses de idade",
+      "Qualquer criança com febre >38,5°C e tosse por mais de 3 dias",
+      "Leucocitose acima de 12.000/mm³ com desvio à esquerda em qualquer faixa etária",
+      "Presença de consolidação no Rx de tórax independentemente do estado geral",
+      "Crianças em creche por risco de disseminação do agente infeccioso"
+    ],
+    correctIndex: 0,
+    explanation: "Critérios de internação: SpO₂ <92%, taquipneia grave, tiragem importante, recusa alimentar/vômitos, suspeita de agente grave (Staph, Gram-negativo), falha ambulatorial, <2 meses ou comorbidades. O estado geral é o principal balizador."
+  },
+  {
+    question: "Um RN de 4 semanas apresenta tosse progressiva há 10 dias, sem febre, com conjuntivite bilateral prévia. Qual a hipótese diagnóstica e a conduta?",
+    options: [
+      "Pneumonia por Chlamydia trachomatis — tratar com azitromicina e investigar a mãe para IST",
+      "Coqueluche por Bordetella pertussis — isolar, notificar e tratar com azitromicina",
+      "Bronquiolite por VSR — tratamento de suporte, sem antibiótico",
+      "Pneumonia bacteriana por Streptococcus agalactiae — ampicilina EV",
+      "Pneumonia viral por CMV — ganciclovir EV se SpO₂ <95%"
+    ],
+    correctIndex: 0,
+    explanation: "Chlamydia trachomatis: clássica em RN e lactentes jovens (2–12 semanas), afebril, conjuntivite neonatal precedendo a pneumonia, tosse espasmódica, infiltrado intersticial. Tratar com azitromicina; investigar e tratar a mãe para clamídia."
+  },
+  {
+    question: "Qual a característica epidemiológica que diferencia Mycoplasma pneumoniae de pneumococo no contexto de PAC?",
+    options: [
+      "Mycoplasma predomina em >5 anos e adolescentes, com transmissão por gotículas e alta capacidade de causar surtos em coletividades",
+      "Mycoplasma é mais frequente em <2 anos, enquanto pneumococo afeta apenas adolescentes",
+      "Mycoplasma causa pneumonia bacterêmica com risco de sepse, ao contrário do pneumococo",
+      "Mycoplasma não responde a nenhum antibiótico, apenas ao tratamento de suporte",
+      "Mycoplasma é exclusivo de lactentes com deficiência imunológica congênita"
+    ],
+    correctIndex: 0,
+    explanation: "Mycoplasma pneumoniae: afeta principalmente >5 anos e adolescentes, com transmissão por gotículas e alta capacidade de causar surtos em coletividades (escolas, quartéis). Causa pneumonia atípica (início insidioso, febre moderada, tosse seca). Trata com macrolídeos."
+  },
+  {
+    question: "Criança de 8 anos, escolar, com febre moderada (38°C), tosse seca persistente há 1 semana, cefaleia e mialgia. Rx: infiltrado intersticial bilateral sem consolidação. Qual o diagnóstico e tratamento?",
+    options: [
+      "Pneumonia atípica por Mycoplasma pneumoniae — tratamento com azitromicina por 5 dias",
+      "PAC típica por Streptococcus pneumoniae — tratamento com amoxicilina por 10 dias",
+      "Bronquiolite viral — tratamento de suporte sem antibiótico",
+      "Tuberculose pulmonar — PPD e tomografia de tórax antes do tratamento",
+      "Pneumonia por Chlamydophila psittaci — doxiciclina por 14 dias"
+    ],
+    correctIndex: 0,
+    explanation: "Pneumonia atípica por Mycoplasma: escolar >5 anos, início insidioso, febre moderada, tosse seca, sintomas sistêmicos (cefaleia, mialgia), infiltrado intersticial bilateral. Tratamento: azitromicina 5 dias ou claritromicina 10 dias. Amoxicilina não tem atividade contra Mycoplasma."
+  },
+  {
+    question: "Qual a principal diferença entre pneumonia lobar e pneumonia intersticial na criança?",
+    options: [
+      "Pneumonia lobar é causada principalmente por bactérias (pneumococo) com consolidação segmentar; pneumonia intersticial é causada principalmente por vírus ou atípicos com infiltrado difuso bilateral",
+      "Pneumonia lobar ocorre apenas em menores de 2 anos; pneumonia intersticial afeta exclusivamente adolescentes",
+      "Pneumonia lobar não tem febre, enquanto pneumonia intersticial cursa sempre com febre alta",
+      "Pneumonia lobar responde a macrolídeos; pneumonia intersticial responde a amoxicilina",
+      "Não há diferença clínica relevante entre os dois padrões em pediatria"
+    ],
+    correctIndex: 0,
+    explanation: "Pneumonia lobar: consolidação de lobo ou segmento, agente bacteriano (pneumococo principalmente), febre alta, tosse produtiva, crepitações. Pneumonia intersticial: infiltrado difuso bilateral, agente viral ou atípico (Mycoplasma), febre moderada, tosse seca. O padrão orienta o antibiótico."
+  },
+  {
+    question: "Qual complicação de PAC bacteriana é caracterizada por derrame pleural com pH <7,2, glicose <40 mg/dL e aspecto turvo ao Gram?",
+    options: [
+      "Empiema pleural — indicação de drenagem cirúrgica ou por toracocentese além de antibioticoterapia",
+      "Derrame parapneumônico simples — tratamento apenas com antibiótico, sem drenagem",
+      "Pneumotórax hipertensivo — drenagem de urgência com agulha de grosso calibre",
+      "Pneumatocele — complicação benigna que regride espontaneamente sem drenagem",
+      "Atelectasia — resolução com fisioterapia respiratória e antibiótico"
+    ],
+    correctIndex: 0,
+    explanation: "Empiema pleural: complicação grave de PAC bacteriana. Critérios de Light: pH <7,2, glicose <40 mg/dL, DHL >1000 UI/L, Gram ou cultura positivos. Tratamento: antibiótico (ceftriaxona/oxacilina) + drenagem pleural. Staphylococcus aureus é o principal agente em lactentes."
+  },
+  {
+    question: "Lactente de 3 meses, febre há 2 dias (39°C), tosse, taquipneia (62 irpm), retração intercostal e saturação de O₂ 91% em ar ambiente. Qual a conduta?",
+    options: [
+      "Internação imediata, suplementação de O₂ e ampicilina endovenosa",
+      "Prescrever amoxicilina oral e retornar em 48 horas",
+      "Rx de tórax e aguardar resultado antes de qualquer tratamento",
+      "Nebulização com broncodilatador e reavaliação em 1 hora",
+      "Alta com orientações e acompanhamento ambulatorial em 24 horas"
+    ],
+    correctIndex: 0,
+    explanation: "Critérios de internação presentes: <2 meses (3 meses é preocupante), taquipneia grave (62 irpm), tiragem intercostal, SpO₂ <92%. Conduta: internação, O₂ suplementar para manter SpO₂ ≥95%, ampicilina EV. Não tratar ambulatorialmente criança com sinais de gravidade."
+  },
+  {
+    question: "Qual agente é responsável pela pneumonia afebril do lactente jovem, associada à conjuntivite neonatal, adquirida durante o parto?",
+    options: [
+      "Chlamydia trachomatis",
+      "Mycoplasma pneumoniae",
+      "Streptococcus agalactiae",
+      "Listeria monocytogenes",
+      "Ureaplasma urealyticum"
+    ],
+    correctIndex: 0,
+    explanation: "Chlamydia trachomatis: transmissão perinatal (canal de parto), conjuntivite neonatal aos 5–14 dias, pneumonia afebril aos 4–12 semanas com tosse espasmódica e infiltrado intersticial. Tratamento: azitromicina. Investigar e tratar a mãe para IST."
+  },
+  {
+    question: "Em qual faixa etária vírus são a principal causa de PAC, e qual o agente mais frequente?",
+    options: [
+      "Menores de 2 anos — Vírus Sincicial Respiratório (VSR) é o principal agente viral",
+      "Escolares de 5 a 10 anos — Influenza A como principal vírus",
+      "Adolescentes — CMV é o agente viral mais frequente nessa faixa",
+      "Recém-nascidos — Herpes simples como principal agente pneumônico",
+      "Lactentes de 2 a 6 meses — Adenovírus como causa exclusiva"
+    ],
+    correctIndex: 0,
+    explanation: "Em <2 anos, especialmente <12 meses, vírus são a principal causa de pneumonia. O VSR é o agente mais frequente, causando bronquiolite (com sibilância) e/ou pneumonia. Outros: parainfluenza, adenovírus, rinovírus. Tratamento é de suporte; antibiótico não é indicado em PAC viral sem sobreinfecção."
+  }
+];
+
+function shuffleQuestion(q) {
+  const correctText = q.options[q.correctIndex];
+  const shuffled = [...q.options];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return { ...q, options: shuffled, correctIndex: shuffled.indexOf(correctText) };
+}
+function prepareQuestions() {
+  const shuffledQs = [...rawQuestions];
+  for (let i = shuffledQs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledQs[i], shuffledQs[j]] = [shuffledQs[j], shuffledQs[i]];
+  }
+  return shuffledQs.map(shuffleQuestion);
+}
+let questions = [], currentIndex = 0, score = 0, answered = 0;
+function startQuiz() {
+  questions = prepareQuestions(); currentIndex = 0; score = 0; answered = 0;
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'block';
+  renderQuestion();
+}
+function renderQuestion() {
+  const q = questions[currentIndex]; const total = questions.length;
+  document.getElementById('progressBar').style.width = ((currentIndex / total) * 100) + '%';
+  document.getElementById('progressLabel').textContent = `Questão ${currentIndex + 1} de ${total}`;
+  document.getElementById('questionNumber').textContent = `Questão ${currentIndex + 1}`;
+  document.getElementById('questionText').textContent = q.question;
+  const container = document.getElementById('optionsContainer'); container.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button'); btn.className = 'option-btn'; btn.textContent = opt;
+    btn.onclick = () => selectAnswer(i); container.appendChild(btn);
+  });
+  document.getElementById('explanation').classList.remove('show');
+  document.getElementById('explanation').textContent = '';
+  document.getElementById('btnNext').classList.remove('show');
+}
+function selectAnswer(selectedIndex) {
+  const q = questions[currentIndex]; const buttons = document.querySelectorAll('.option-btn');
+  buttons.forEach(btn => btn.disabled = true);
+  if (selectedIndex === q.correctIndex) { buttons[selectedIndex].classList.add('correct'); score++; }
+  else { buttons[selectedIndex].classList.add('wrong'); buttons[q.correctIndex].classList.add('correct'); }
+  answered++;
+  const exp = document.getElementById('explanation'); exp.textContent = q.explanation; exp.classList.add('show');
+  const btnNext = document.getElementById('btnNext');
+  btnNext.textContent = currentIndex < questions.length - 1 ? 'Próxima questão →' : 'Ver resultado';
+  btnNext.classList.add('show');
+}
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex < questions.length) { renderQuestion(); } else { showResult(); }
+}
+function showResult() {
+  document.getElementById('quizArea').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+  const total = questions.length; const pct = Math.round((score / total) * 100);
+  document.getElementById('scoreFinal').textContent = score;
+  document.getElementById('scoreDenom').textContent = `de ${total}`;
+  document.getElementById('statCorrect').textContent = score;
+  document.getElementById('statWrong').textContent = total - score;
+  document.getElementById('statPct').textContent = pct + '%';
+  let title, msg;
+  if (pct >= 90) { title = 'Excelente!'; msg = 'Domínio completo do conteúdo. Você está preparado para a prova.'; }
+  else if (pct >= 70) { title = 'Muito bom!'; msg = 'Bom domínio geral. Revise os pontos onde errou antes da prova.'; }
+  else if (pct >= 50) { title = 'Razoável'; msg = 'Ainda há pontos a consolidar. Releia o relatório e refaça o quiz.'; }
+  else { title = 'Precisa revisar'; msg = 'Recomendo reler o relatório completo antes de tentar novamente.'; }
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultMsg').textContent = msg;
+}
+function restartQuiz() { startQuiz(); }
+</script>
+</body>
+</html>
