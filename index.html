@@ -92,9 +92,9 @@ const rawQuestions = [
     options: [
       "Febre + tosse + taquipneia",
       "Febre + dispneia + leucocitose",
-      "Tosse + crepitações + infiltrado no Rx",
-      "Febre + consolidação pulmonar + queda do estado geral",
-      "Taquipneia + hipoxemia + proteína C reativa elevada"
+      "Tosse + crepitações + hipoxemia",
+      "Febre + consolidação + hipoxemia",
+      "Taquipneia + hipoxemia + febre"
     ],
     correctIndex: 0,
     explanation: "O diagnóstico de PAC é essencialmente clínico: febre + tosse + taquipneia. A taquipneia é o sinal mais sensível e específico de pneumonia em crianças. Radiografia de tórax é reservada para casos graves ou de difícil diagnóstico."
@@ -128,7 +128,7 @@ const rawQuestions = [
     options: [
       "Streptococcus pneumoniae",
       "Mycoplasma pneumoniae",
-      "Haemophilus influenzae tipo b",
+      "Haemophilus influenzae Hib",
       "Staphylococcus aureus",
       "Chlamydophila pneumoniae"
     ],
@@ -163,10 +163,10 @@ const rawQuestions = [
     question: "Qual o tratamento de primeira linha para PAC ambulatorial em crianças previamente hígidas?",
     options: [
       "Amoxicilina oral 45–90 mg/kg/dia por 7–10 dias",
-      "Azitromicina oral por 5 dias",
-      "Ceftriaxona intramuscular dose única",
-      "Ampicilina endovenosa por 7 dias",
-      "Claritromicina oral por 14 dias"
+      "Azitromicina oral 10 mg/kg/dia por 5 dias",
+      "Ceftriaxona 50 mg/kg/dia IM dose única",
+      "Ampicilina EV 100–200 mg/kg/dia por 7 dias",
+      "Claritromicina oral 15 mg/kg/dia por 14 dias"
     ],
     correctIndex: 0,
     explanation: "PAC ambulatorial em criança sem complicações: amoxicilina oral (45–90 mg/kg/dia dividida em 2–3 doses, por 7–10 dias). Cobre pneumococo. Azitromicina é reservada para suspeita de atípicos (>5 anos) ou alergia à penicilina."
@@ -174,11 +174,11 @@ const rawQuestions = [
   {
     question: "Qual o antibiótico de escolha para PAC com indicação de internação hospitalar e tratamento endovenoso?",
     options: [
-      "Ampicilina endovenosa",
-      "Ceftriaxona endovenosa",
-      "Vancomicina endovenosa",
-      "Clindamicina endovenosa",
-      "Penicilina cristalina endovenosa"
+      "Ampicilina EV 200 mg/kg/dia",
+      "Ceftriaxona EV 50–100 mg/kg/dia",
+      "Vancomicina EV 40–60 mg/kg/dia",
+      "Clindamicina EV 25–40 mg/kg/dia",
+      "Penicilina cristalina EV"
     ],
     correctIndex: 0,
     explanation: "PAC hospitalar sem complicações: ampicilina EV. Nos casos mais graves, com suspeita de pneumococo resistente ou complicações (empiema, abscesso), usa-se ceftriaxona ou amoxicilina-clavulanato EV. Vancomicina para casos graves com resistência."
@@ -186,9 +186,9 @@ const rawQuestions = [
   {
     question: "Em quais situações está indicada a radiografia de tórax na PAC pediátrica?",
     options: [
-      "Casos graves, sem resposta ao tratamento inicial, suspeita de complicações (empiema, abscesso) ou dúvida diagnóstica",
+      "Casos graves, falha terapêutica, suspeita de complicações ou dúvida diagnóstica",
       "Rotineiramente em todo caso de pneumonia diagnosticado clinicamente",
-      "Apenas em lactentes menores de 3 meses com taquipneia",
+      "Apenas em lactentes menores de 3 meses com taquipneia isolada",
       "Somente quando há hemograma com leucocitose acima de 15.000/mm³",
       "Obrigatória antes de iniciar qualquer antibiótico ambulatorial"
     ],
@@ -198,8 +198,8 @@ const rawQuestions = [
   {
     question: "Quais são os critérios de internação hospitalar para PAC pediátrica?",
     options: [
-      "Hipoxemia (SpO₂ <92%), taquipneia grave, dificuldade respiratória importante, recusa alimentar, suspeita de agente grave, falha do tratamento ambulatorial ou <2 meses de idade",
-      "Qualquer criança com febre >38,5°C e tosse por mais de 3 dias",
+      "SpO₂ <92%, taquipneia grave, tiragem importante, falha ambulatorial ou idade <2 meses",
+      "Qualquer criança com febre >38,5°C, tosse persistente por mais de 3 dias",
       "Leucocitose acima de 12.000/mm³ com desvio à esquerda em qualquer faixa etária",
       "Presença de consolidação no Rx de tórax independentemente do estado geral",
       "Crianças em creche por risco de disseminação do agente infeccioso"
@@ -210,11 +210,11 @@ const rawQuestions = [
   {
     question: "Um RN de 4 semanas apresenta tosse progressiva há 10 dias, sem febre, com conjuntivite bilateral prévia. Qual a hipótese diagnóstica e a conduta?",
     options: [
-      "Pneumonia por Chlamydia trachomatis — tratar com azitromicina e investigar a mãe para IST",
-      "Coqueluche por Bordetella pertussis — isolar, notificar e tratar com azitromicina",
-      "Bronquiolite por VSR — tratamento de suporte, sem antibiótico",
+      "Pneumonia por Chlamydia trachomatis — azitromicina e investigar a mãe para IST",
+      "Coqueluche por Bordetella pertussis — notificar e tratar com azitromicina",
+      "Bronquiolite por VSR — suporte respiratório sem antibiótico específico",
       "Pneumonia bacteriana por Streptococcus agalactiae — ampicilina EV",
-      "Pneumonia viral por CMV — ganciclovir EV se SpO₂ <95%"
+      "Pneumonia viral por CMV — ganciclovir EV em casos graves com SpO₂ <95%"
     ],
     correctIndex: 0,
     explanation: "Chlamydia trachomatis: clássica em RN e lactentes jovens (2–12 semanas), afebril, conjuntivite neonatal precedendo a pneumonia, tosse espasmódica, infiltrado intersticial. Tratar com azitromicina; investigar e tratar a mãe para clamídia."
@@ -222,7 +222,7 @@ const rawQuestions = [
   {
     question: "Qual a característica epidemiológica que diferencia Mycoplasma pneumoniae de pneumococo no contexto de PAC?",
     options: [
-      "Mycoplasma predomina em >5 anos e adolescentes, com transmissão por gotículas e alta capacidade de causar surtos em coletividades",
+      "Mycoplasma predomina em >5 anos com transmissão por gotículas e surtos em coletividades",
       "Mycoplasma é mais frequente em <2 anos, enquanto pneumococo afeta apenas adolescentes",
       "Mycoplasma causa pneumonia bacterêmica com risco de sepse, ao contrário do pneumococo",
       "Mycoplasma não responde a nenhum antibiótico, apenas ao tratamento de suporte",
@@ -234,9 +234,9 @@ const rawQuestions = [
   {
     question: "Criança de 8 anos, escolar, com febre moderada (38°C), tosse seca persistente há 1 semana, cefaleia e mialgia. Rx: infiltrado intersticial bilateral sem consolidação. Qual o diagnóstico e tratamento?",
     options: [
-      "Pneumonia atípica por Mycoplasma pneumoniae — tratamento com azitromicina por 5 dias",
-      "PAC típica por Streptococcus pneumoniae — tratamento com amoxicilina por 10 dias",
-      "Bronquiolite viral — tratamento de suporte sem antibiótico",
+      "Pneumonia atípica por Mycoplasma pneumoniae — azitromicina por 5 dias",
+      "PAC típica por Streptococcus pneumoniae — amoxicilina por 10 dias",
+      "Bronquiolite viral — tratamento de suporte sem antibiótico específico",
       "Tuberculose pulmonar — PPD e tomografia de tórax antes do tratamento",
       "Pneumonia por Chlamydophila psittaci — doxiciclina por 14 dias"
     ],
@@ -246,10 +246,10 @@ const rawQuestions = [
   {
     question: "Qual a principal diferença entre pneumonia lobar e pneumonia intersticial na criança?",
     options: [
-      "Pneumonia lobar é causada principalmente por bactérias (pneumococo) com consolidação segmentar; pneumonia intersticial é causada principalmente por vírus ou atípicos com infiltrado difuso bilateral",
-      "Pneumonia lobar ocorre apenas em menores de 2 anos; pneumonia intersticial afeta exclusivamente adolescentes",
-      "Pneumonia lobar não tem febre, enquanto pneumonia intersticial cursa sempre com febre alta",
-      "Pneumonia lobar responde a macrolídeos; pneumonia intersticial responde a amoxicilina",
+      "Lobar: bacteriana, consolidação segmentar; intersticial: viral ou atípica, infiltrado difuso",
+      "Lobar ocorre apenas em menores de 2 anos; intersticial afeta exclusivamente adolescentes",
+      "Lobar não cursa com febre; intersticial apresenta sempre febre alta e tosse seca",
+      "Lobar responde a macrolídeos; intersticial responde a amoxicilina e β-lactâmicos",
       "Não há diferença clínica relevante entre os dois padrões em pediatria"
     ],
     correctIndex: 0,
@@ -258,7 +258,7 @@ const rawQuestions = [
   {
     question: "Qual complicação de PAC bacteriana é caracterizada por derrame pleural com pH <7,2, glicose <40 mg/dL e aspecto turvo ao Gram?",
     options: [
-      "Empiema pleural — indicação de drenagem cirúrgica ou por toracocentese além de antibioticoterapia",
+      "Empiema pleural — drenagem cirúrgica ou toracocentese associada a antibioticoterapia",
       "Derrame parapneumônico simples — tratamento apenas com antibiótico, sem drenagem",
       "Pneumotórax hipertensivo — drenagem de urgência com agulha de grosso calibre",
       "Pneumatocele — complicação benigna que regride espontaneamente sem drenagem",
@@ -294,7 +294,7 @@ const rawQuestions = [
   {
     question: "Em qual faixa etária vírus são a principal causa de PAC, e qual o agente mais frequente?",
     options: [
-      "Menores de 2 anos — Vírus Sincicial Respiratório (VSR) é o principal agente viral",
+      "<2 anos — Vírus Sincicial Respiratório (VSR) como principal agente viral",
       "Escolares de 5 a 10 anos — Influenza A como principal vírus",
       "Adolescentes — CMV é o agente viral mais frequente nessa faixa",
       "Recém-nascidos — Herpes simples como principal agente pneumônico",
